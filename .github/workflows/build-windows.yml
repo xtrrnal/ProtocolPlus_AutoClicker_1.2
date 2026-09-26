@@ -36,7 +36,7 @@ jobs:
       - name: Compile Protocol+ Auto Clicker
         shell: cmd
         run: |
-          cl.exe /nologo /O2 /EHsc /DUNICODE /D_UNICODE ^
+          cl.exe /nologo /O2 /EHsc /std:c++17 /DUNICODE /D_UNICODE ^
           src\ProtocolPlus_Auto_Clicker.cpp ^
           ProtocolPlus_Auto_Clicker.res ^
           user32.lib gdi32.lib shell32.lib ^
