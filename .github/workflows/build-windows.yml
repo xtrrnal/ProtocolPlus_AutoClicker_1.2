@@ -1,0 +1,56 @@
+name: Build Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Inno Setup
+        shell: powershell
+        run: |
+          choco install innosetup -y --no-progress
+
+      - name: Create build folders
+        shell: cmd
+        run: |
+          if not exist build mkdir build
+          if not exist release mkdir release
+
+      - name: Compile resources
+        shell: cmd
+        run: |
+          rc.exe /nologo ProtocolPlus_Auto_Clicker.rc
+
+      - name: Compile Protocol+ Auto Clicker
+        shell: cmd
+        run: |
+          cl.exe /nologo /O2 /EHsc /DUNICODE /D_UNICODE ^
+          src\ProtocolPlus_Auto_Clicker.cpp ^
+          ProtocolPlus_Auto_Clicker.res ^
+          user32.lib gdi32.lib shell32.lib ^
+          /link /SUBSYSTEM:WINDOWS ^
+          /OUT:build\ProtocolPlus_Auto_Clicker.exe
+
+      - name: Build installer
+        shell: cmd
+        run: |
+          "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" installer.iss
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProtocolPlus-AutoClicker-v1.2-Installer
+          path: release\ProtocolPlus_Auto_Clicker_Setup.exe
+          if-no-files-found: error
