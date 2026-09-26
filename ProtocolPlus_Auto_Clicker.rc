@@ -1,0 +1,5 @@
+#include <windows.h>
+
+#define IDI_PROTOCOLPLUS 101
+
+IDI_PROTOCOLPLUS ICON "resources\\protocolplus.ico"
